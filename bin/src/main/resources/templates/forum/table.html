@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"></meta>
+<style type="text/css">
+table.altrowstable {
+	font-size: 18px;
+	color: #333333;
+	border-width: 1px;
+	border-color: #4f79b0;
+	border-collapse: collapse;
+}
+
+table.altrowstable th {
+	border-width: 1px;
+	padding: 8px;
+	max-width:500px;
+	min-width:110px;
+	table-layout:auto;
+	font-family: serif;
+	border-style: solid;
+	border-color: #4f79b0;
+}
+
+table.altrowstable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #4f79b0;
+}
+
+.oddrowcolor {
+	background-color: #d4e3e5;
+}
+
+.evenrowcolor {
+	background-color: #d4e3e5;
+}
+
+a:hover {color:#326f92;}
+
+button {
+	font-family: arial,serif;
+	box-sizing: border-box;
+  	text-align:center;
+  	font-size:15px;
+  	height:28px;
+  	border-radius:2px;
+  	border:1px solid #4f79b0;
+  	color:#FFFFFF;
+  	background-color:#4f79b0 ;
+  	-web-kit-appearance:none;
+  	-moz-appearance: none;
+  	outline:0;
+  	text-decoration:none;
+  	width:130px;
+}
+
+</style>
+</head>
+<body>
+	<div style="margin-top: 30px; margin-left: 50px">
+		<table class="altrowstable" id="alternatecolor">
+			<tr>
+				<th>标题</th>
+				<th>内容</th>
+				<th>发布者</th>
+				<th>回复</th>
+				<th>发布时间</th>
+				<th>操作</th>
+			</tr>
+			<tr th:each="forum:${list}">
+				<th th:text="${forum.title}"></th>
+				<th th:text="${forum.info}"></th>
+				<th th:text="${forum.number}"></th>
+				<th th:inline="text">[[${forum.count}]]条回复
+				<a th:if="${forum.count}>0" th:href="@{'/page/reply/table/'+${forum.id}}">点击查看</a></th>
+				<th th:text="${forum.date}"></th>
+				<th>
+				 <a th:onclick="'javascript:a_delete(\''+${forum.id}+'\')'">删除</a></th>
+			</tr>
+		</table>
+	</div>
+	<div id="div_action"
+		style="float: left; margin-top: 30px; margin-left: 50px; width: 500px;">
+		<a style="float: left;">上一页&nbsp;&nbsp;</a> <label style="float: left;">1</label>
+		<a style="float: left;">&nbsp;&nbsp;下一页</a>
+	</div>
+
+	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	<script type="text/javascript">
+		function altRows(id) {
+			if (document.getElementsByTagName) {
+
+				var table = document.getElementById(id);
+				var rows = table.getElementsByTagName("tr");
+				for (i = rows.length; i > 0; i--) {
+					$(rows[i]).attr("onmouseover",
+							"this.style.backgroundColor='#ffff66';");
+					$(rows[i]).attr("onmouseout",
+							"this.style.backgroundColor='#d4e3e5';");
+					if (i % 2 == 0) {
+						$(rows[i]).attr("class", "evenrowcolor");
+					} else {
+						$(rows[i]).attr("class", "oddrowcolor");
+					}
+				}
+			}
+		}
+		$(document).ready(function() {
+			altRows('alternatecolor');
+			var tab_w = $("#alternatecolor").width();
+			$("#div_action").css("width", tab_w);
+		});
+		
+		
+		function a_delete(id){
+			if(confirm("是否确认删除")){
+				$.get("/page/forum/detele/"+id,function(obj){
+					if(obj.code == 0){
+						window.location.href = "/page/forum/table";
+					}else{
+						alert("删除失败");
+					}
+				});
+			}
+		}
+	</script>
+</body>
+</html>

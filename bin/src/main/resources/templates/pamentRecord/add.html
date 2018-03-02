@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"></meta>
+<style type="text/css">
+table.altrowstable {
+	font-family: verdana, arial;
+	font-size: 20px;
+	color: #333333;
+	border-width: 1px;
+	border-color: #a9c6c9;
+	border-collapse: collapse;
+}
+
+table.altrowstable th {
+	border-width: 1px;
+	padding: 8px;
+	max-width:600px;
+	min-width:150px;
+	table-layout:auto;
+	border-style: solid;
+	border-color: #a9c6c9;
+}
+
+table.altrowstable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #a9c6c9;
+}
+
+#ipt_name {
+	font-size: 18px;
+	padding: 5px;
+	float: left;
+}
+
+#ipt_price {
+	font-size: 18px;
+	padding: 5px;
+	float: left;
+}
+
+select{
+font-size: 18px;
+	padding: 5px;
+	float: left;
+}
+
+button {
+	font-family: arial, serif;
+	box-sizing: border-box;
+	text-align: center;
+	font-size: 16px;
+	height: 30px;
+	border-radius: 1px;
+	border: 1px solid #323f92;
+	color: #FFFFFF;
+	margin-top: 2%;
+	background-color: #4f79b0;
+	-web-kit-appearance: none;
+	-moz-appearance: none;
+	outline: 0;
+	text-decoration: none;
+	width: 90px;
+}
+</style>
+</head>
+<body>
+	<div style="margin-top: 30px; margin-left: 50px">
+		<table class="altrowstable" id="alternatecolor">
+			<tr>
+				<th>缴费业主账号</th>
+				<th>
+				<select id="slt_name">
+				<option value="-1">请选择</option>
+				<option th:each="user:${list}" th:inline="text">[[${user.number}]]
+				([[${user.dong}]]栋-[[${user.dan}]]单元-[[${user.hao}]]号)</option>
+				</select>
+</th>
+			</tr>
+			<tr>
+				<th>金额</th>
+				<th><input onkeyup="value=value.replace(/[^\d]/g,'')" id="ipt_price" type="text" placeholder="请输入金额" /></th>
+			</tr>
+			<th>类别</th>
+			<th><input checked="checked" type="radio" name="type" value="0" /><label
+				style="font-size: 18px">水费</label>
+				<input type="radio" name="type" value="1" /><label
+				style="font-size: 18px">电费</label>
+				<input type="radio" name="type" value="2" /><label
+				style="font-size: 18px">燃气费</label>
+				<input type="radio" name="type" value="3" /><label
+				style="font-size: 18px">停车费</label>
+				<input type="radio" name="type" value="4" /><label
+				style="font-size: 18px">物管费</label></th>
+		</table>
+	</div>
+	<div id="div_action"
+		style="float: left; margin-top: 30px; margin-left: 50px; width: 500px;">
+		<button onclick="btn_cancel()"
+			style="float: right; margin-left: 30px;">取消</button>
+		<button onclick="btn_ok()" style="float: right;">确定</button>
+	</div>
+
+	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var tab_w = $("#alternatecolor").width();
+			$("#div_action").css("width", tab_w);
+		});
+
+		function btn_cancel() {
+			window.location.href = "/page/record/table";
+		}
+
+		function btn_ok() {
+			
+			var number = $("#slt_name").val();
+			number = number.split("(")[0];
+			
+			var price = $("#ipt_price").val();
+			price = $.trim(price);
+			if (price == "") {
+				alert("金额不能为空")
+				return;
+			}
+			
+			var type = $("input[name='type']:checked").val();
+
+			var data = '{"number" : "' + number + '","amount":"' + price
+					+ '","type" :"' + type + '" }';
+			$.ajax({
+				url : "/page/record/add",
+				type : "POST",
+				datatype : "JSON",
+				contentType : "application/json;charset=utf-8",
+				data : data,
+				success : function(obj) {
+					if (obj.code == 0) {
+						btn_cancel();
+					} else {
+						alert(obj.message);
+					}
+				},
+				error : function() {
+					alert("提交失败！");
+				}
+			});
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"></meta>
+<title>物业管理平台</title>
+<style type="text/css">
+body {
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+.page_top {
+	height: 800px;
+	width: 100%;
+	background-color: #323f92;
+}
+
+.page_top h1 {
+	margin: 0 0 0 25px;
+	padding-top: 26px;
+	color: #FFFFFF;
+}
+
+.page_top div {
+	position: absolute;
+	right: 10px;
+	top: 30px;
+}
+
+.page_top label {
+	font-family: arial,sans-serif;
+	font-size:20px;
+	color: #FFFFFF;
+}
+
+.page_top button {
+	font-family: arial,serif;
+	box-sizing: border-box;
+  	text-align:center;
+  	font-size:15px;
+  	height:30px;
+  	border-radius:1px;
+  	border:1px solid #323f92;
+  	color:#FFFFFF;
+  	margin-top:5%;
+  	background-color:#4f79b0 ;
+  	-web-kit-appearance:none;
+  	-moz-appearance: none;
+  	outline:0;
+  	text-decoration:none;
+  	width:130px;
+}
+</style>
+</head>
+<body>
+
+	<div class="page_top">
+		<h1>物业管理平台</h1>
+		<div>
+			<label th:text="${name}"></label><label>,您好！</label>
+			<button onclick="loginOut()">退出登录</button>
+		</div>
+	</div>
+
+	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	<script type="text/javascript">
+		function loginOut() {
+			window.open('/logout','_top')
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"></meta>
+<title>管理员登陆</title>
+<style type="text/css">
+body {
+	text-align: center
+}
+
+.div_root {
+	margin: 0 auto;
+	width: 26%;
+	height: 40%;
+	background-color: #FFFFFF
+}
+
+.ipu {
+	font-family: arial;
+	box-sizing: border-box;
+  	text-align:center;
+  	font-size:20px;
+  	height:10%;
+  	border-radius:4px;
+  	border:1px solid #c8cccf;
+  	color:#6a6f77;
+  	margin-bottom:10%;
+  	-web-kit-appearance:none;
+  	-moz-appearance: none;
+  	display:block;
+  	outline:0;
+  	padding:10px;
+  	text-decoration:none;
+  	width:100%;
+}
+
+button {
+	font-family: arial;
+	box-sizing: border-box;
+  	text-align:center;
+  	font-size:20px;
+  	height:10%;
+  	border-radius:4px;
+  	border:1px solid #323f92;
+  	color:#FFFFFF;
+  	background-color:#4f79b0;
+  	margin-bottom:10%;
+  	-web-kit-appearance:none;
+  	-moz-appearance: none;
+  	display:block;
+  	outline:0;
+  	padding:10px;
+  	text-decoration:none;
+  	width:100%;
+}
+
+.h1_top {
+	margin-top: 10%;
+	margin-bottom: 4.5%;
+	color: #323f92;
+}
+
+#lb_tip {
+	color: #4f79b0;
+}
+</style>
+</head>
+<body>
+	<h1 class="h1_top">物业管理平台</h1>
+	<div class="div_root">
+		<div>
+			<input class="ipu" id="inp_name" type="text" placeholder="请输入账号" />
+		</div>
+		<div>
+			<input class="ipu" id="inp_pwd" type="password" placeholder="请输入密码" />
+		</div>
+		<button onclick="login()">登&nbsp;&nbsp;&nbsp;&nbsp;陆</button>
+		<div>
+			<label id="lb_tip"></label>
+		</div>
+	</div>
+	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	<script type="text/javascript">
+		function login() {
+			var name = $("#inp_name").val();
+			var pwd = $("#inp_pwd").val();
+			name = $.trim(name);
+			if (name == '') {
+				alert("请输入账号！");
+				return false;
+			}
+			;
+			pwd = $.trim(pwd);
+			if (pwd == '') {
+				alert("请输入密码!");
+				return false;
+			}
+			;
+			$.ajax({
+				url : "/dologin",
+				type : "POST",
+				datatype : "JSON",
+				contentType : "application/json;charset=utf-8",
+				data : '{"adminCode" : "' + name + '","pwd" :"' + pwd + '" }',
+				success : function(obj) {
+					if (obj.code == 0) {
+						alert(obj.message);
+						window.location.href = "/";
+					} else {
+						$("#lb_tip").html(obj.message)
+					}
+				},
+				error : function() {
+					alert("提交失败！");
+				}
+			});
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"></meta>
+<style type="text/css">
+table.altrowstable {
+	font-family: verdana, arial;
+	font-size: 20px;
+	color: #333333;
+	border-width: 1px;
+	border-color: #a9c6c9;
+	border-collapse: collapse;
+}
+
+table.altrowstable th {
+	border-width: 1px;
+	padding: 8px;
+	width: 1px;
+	white-space: nowrap;
+	border-style: solid;
+	border-color: #a9c6c9;
+}
+
+table.altrowstable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #a9c6c9;
+}
+
+input{
+	font-size: 18px;
+	padding: 5px;
+}
+
+button {
+	font-family: arial,serif;
+	box-sizing: border-box;
+  	text-align:center;
+  	font-size:16px;
+  	height:30px;
+  	border-radius:1px;
+  	border:1px solid #323f92;
+  	color:#FFFFFF;
+  	margin-top:2%;
+  	background-color:#4f79b0 ;
+  	-web-kit-appearance:none;
+  	-moz-appearance: none;
+  	outline:0;
+  	text-decoration:none;
+  	width:90px;
+}
+</style>
+</head>
+<body>
+	<div style="margin-top: 30px; margin-left: 50px">
+		<table class="altrowstable" id="alternatecolor">
+			<tr>
+				<th>账号</th>
+				<th><input id="ipt_number" type="text" placeholder="请输入账号" /></th>
+			</tr>
+			<tr>
+				<th>昵称</th>
+				<th><input id="ipt_name" type="text" placeholder="请输入昵称" /></th>
+			</tr>
+			<tr>
+				<th>电话</th>
+				<th><input id="ipt_tel" type="text" placeholder="请输入电话" /></th>
+			</tr>
+			<tr>
+				<th>性别</th>
+				<th><input checked="checked" type="radio" name="sex" value="1" /><label
+					style="font-size: 18px">男</label><input style="margin-left: 10px"
+					type="radio" name="sex" value="0" /><label style="font-size: 18px">女</label></th>
+			</tr>
+			<tr>
+				<th>栋数</th>
+				<th><input id="ipt_dong" type="text" placeholder="请输入栋数" /></th>
+			</tr>
+			<tr>
+				<th>单元</th>
+				<th><input id="ipt_dan" type="text" placeholder="请输入单元" /></th>
+			</tr>
+			<tr>
+				<th>门牌号</th>
+				<th><input id="ipt_hao" type="text" placeholder="请输入门牌号" /></th>
+			</tr>
+		</table>
+	</div>
+	<div id="div_action"
+		style="float: left; margin-top: 30px; margin-left: 50px; width: 500px;">
+		<button onclick="btn_cancel()"
+			style="float: right; margin-left: 30px;">取消</button>
+		<button onclick="btn_ok()" style="float: right;">确定</button>
+	</div>
+
+	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var tab_w = $("#alternatecolor").width();
+			$("#div_action").css("width", tab_w);
+		});
+
+		function btn_cancel() {
+			window.location.href = "/page/user/table/0";
+		}
+
+		function btn_ok() {
+			var number = $("#ipt_number").val();
+			var name = $("#ipt_name").val();
+			var tel = $("#ipt_tel").val();
+			var sex = $("input[name='sex']:checked").val();
+			var dong = $("#ipt_dong").val();
+			var dan = $("#ipt_dan").val();
+			var hao = $("#ipt_hao").val();
+			number = $.trim(number);
+			if (number == "") {
+				alert("用户名不能为空")
+				return;
+			}
+			
+			var data = '{"number" : "' + number + '","name":"'+name+'","tel" :"' + tel
+				+ '","sex" :"' + sex + '","dong" :"' + dong
+				+ '","dan" :"' + dan + '","hao" :"' + hao + '" }';
+			$.ajax({
+				url : "/page/user/add",
+				type : "POST",
+				datatype : "JSON",
+				contentType : "application/json;charset=utf-8",
+				data : data,
+				success : function(obj) {
+					if (obj.code == 0) {
+						btn_cancel();
+					} else {
+						alert(obj.message);
+					}
+				},
+				error : function() {
+					alert("提交失败！");
+				}
+			});
+		}
+	</script>
+</body>
+</html>
