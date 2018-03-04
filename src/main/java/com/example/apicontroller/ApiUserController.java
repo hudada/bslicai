@@ -32,8 +32,11 @@ public class ApiUserController {
 	@Autowired
 	private UserDao userDao;
 
-	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
-	public BaseBean<UserBean> addUser(@RequestBody UserBean userBean) {
+	@RequestMapping(value = "/", method = RequestMethod.POST)
+	public BaseBean<UserBean> addUser(HttpServletRequest request) {
+		UserBean userBean = new UserBean();
+		userBean.setNumber(request.getParameter("number"));
+		userBean.setPwd(request.getParameter("pwd"));
 		if (userDao.findUserByNumber(userBean.getNumber()) == null) {
 			return ResultUtils.resultSucceed(userDao.save(userBean));
 		} else {
@@ -41,8 +44,11 @@ public class ApiUserController {
 		}
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
-	public BaseBean<UserBean> userLogin(@RequestBody UserBean userBean) {
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public BaseBean<UserBean> userLogin(HttpServletRequest request) {
+		UserBean userBean = new UserBean();
+		userBean.setNumber(request.getParameter("number"));
+		userBean.setPwd(request.getParameter("pwd"));
 		UserBean select = userDao.findUserByNumberAndPwd(userBean.getNumber(), userBean.getPwd());
 		if (select == null) {
 			return ResultUtils.resultError("账号或密码错误");

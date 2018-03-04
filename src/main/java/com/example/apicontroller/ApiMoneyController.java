@@ -42,24 +42,33 @@ public class ApiMoneyController {
 	@Autowired
 	private OutTypeDao outTypeDao;
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json")
-	public BaseBean<SaveBean> add(@RequestBody SaveBean bean) {
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public BaseBean<SaveBean> add(HttpServletRequest request) {
+		SaveBean bean = new SaveBean();
+		bean.setAddress(request.getParameter("address"));
+		bean.setFlag(Integer.parseInt(request.getParameter("flag")) );
+		bean.setMoney(Double.parseDouble(request.getParameter("money")));
+		bean.setName(request.getParameter("name"));
+		bean.setTime(Long.parseLong(request.getParameter("time")));
+		bean.setUid(Long.parseLong(request.getParameter("uid")));
 		return ResultUtils.resultSucceed(saveDao.save(bean));
 	}
 
-	@RequestMapping(value = "/del/{id}", method = RequestMethod.POST)
-	public BaseBean<SaveBean> del(@PathVariable String id) {
-		saveDao.delete(Long.parseLong(id));
+	@RequestMapping(value = "/del", method = RequestMethod.POST)
+	public BaseBean<SaveBean> del(HttpServletRequest request) {
+		saveDao.delete(Long.parseLong(request.getParameter("id")));
 		return ResultUtils.resultSucceed("");
 	}
 
-	@RequestMapping(value = "/list/{start}/{end}", method = RequestMethod.GET)
-	public BaseBean<SaveInfoBean> list(@PathVariable String start, @PathVariable String end) {
+	@RequestMapping(value = "/list/{start}/{end}/{uid}", method = RequestMethod.GET)
+	public BaseBean<SaveInfoBean> list(@PathVariable String start, @PathVariable String end
+			, @PathVariable String uid) {
 		long startL = Long.parseLong(start);
 		long endL = Long.parseLong(end);
-		List<SaveBean> data = (List<SaveBean>) ResultUtils.resultSucceed(saveDao.findByTime(startL, endL));
+		long uidL= Long.parseLong(uid);
+		List<SaveBean> data = (List<SaveBean>)saveDao.findByTime(startL, endL,uidL);
 		if (data == null || data.size() <= 0) {
-			return ResultUtils.resultError("");
+			return ResultUtils.resultSucceed("");
 		} else {
 			Double totOut = 0.0, totIn = 0.0, totTwo = 0.0;
 			for (SaveBean saveBean : data) {
@@ -89,17 +98,18 @@ public class ApiMoneyController {
 		return ResultUtils.resultSucceed(outTypeDao.findAll());
 	}
 
-	@RequestMapping(value = "/statistics/{start}/{end}/{type}", method = RequestMethod.GET)
+	@RequestMapping(value = "/statistics/{start}/{end}/{type}/{uid}", method = RequestMethod.GET)
 	public BaseBean<List<StatisticsBean>> statistics(@PathVariable String start, @PathVariable String end,
-			@PathVariable String type) {
+			@PathVariable String type	, @PathVariable String uid) {
 		long startL = Long.parseLong(start);
 		long endL = Long.parseLong(end);
 		int typeI = Integer.parseInt(type);
+		long uidL= Long.parseLong(uid);
 		List<SaveBean> data = null;
 		List<StatisticsBean> statisticsBeans = new ArrayList<>();
 		switch (typeI) {
 		case -1:
-			data = (List<SaveBean>) ResultUtils.resultSucceed(saveDao.findByTime(startL, endL));
+			data = (List<SaveBean>) saveDao.findByTime(startL, endL,uidL);
 			if (data != null && data.size() > 0) {
 				Double totOut = 0.0, totIn = 0.0;
 				for (SaveBean saveBean : data) {
@@ -110,18 +120,18 @@ public class ApiMoneyController {
 					}
 				}
 				StatisticsBean out = new StatisticsBean();
-				out.setName("out");
+				out.setName("支出");
 				out.setMoney(totOut + "");
 				statisticsBeans.add(out);
 
 				StatisticsBean in = new StatisticsBean();
-				in.setName("in");
+				in.setName("收入");
 				in.setMoney(totIn + "");
 				statisticsBeans.add(in);
 			}
 			break;
 		case 0:
-			data = (List<SaveBean>) ResultUtils.resultSucceed(saveDao.findByTimeAndFlag(startL, endL, 0));
+			data = (List<SaveBean>) saveDao.findByTimeAndFlag(startL, endL, 0,uidL);
 			if (data != null && data.size() > 0) {
 				HashMap<String, Double> map = new HashMap<>();
 				for (SaveBean saveBean : data) {
@@ -142,7 +152,7 @@ public class ApiMoneyController {
 			}
 			break;
 		case 1:
-			data = (List<SaveBean>) ResultUtils.resultSucceed(saveDao.findByTimeAndFlag(startL, endL, 1));
+			data = (List<SaveBean>) saveDao.findByTimeAndFlag(startL, endL, 1,uidL);
 			if (data != null && data.size() > 0) {
 				HashMap<String, Double> map = new HashMap<>();
 				for (SaveBean saveBean : data) {
@@ -167,7 +177,7 @@ public class ApiMoneyController {
 		if (statisticsBeans.size() > 0) {
 			return ResultUtils.resultSucceed(statisticsBeans);
 		} else {
-			return ResultUtils.resultError("");
+			return ResultUtils.resultSucceed("");
 		}
 	}
 

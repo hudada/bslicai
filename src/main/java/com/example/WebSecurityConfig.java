@@ -17,8 +17,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 @Configuration
 public class WebSecurityConfig extends WebMvcConfigurerAdapter {
 	public final static String SESSION_KEY = "user";
-	@Value("${bs.imagesPath}")
-    private String mImagesPath;
 
 	@Bean
 	public SecurityInterceptor getSecurityInterceptor() {
@@ -51,21 +49,5 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
 			return false;
 		}
 	}
-	
-	@Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        if(mImagesPath.equals("") || mImagesPath.equals("${cbs.imagesPath}")){
-            String imagesPath = WebSecurityConfig.class.getClassLoader().getResource("").getPath();
-            if(imagesPath.indexOf(".jar")>0){
-                imagesPath = imagesPath.substring(0, imagesPath.indexOf(".jar"));
-            }else if(imagesPath.indexOf("classes")>0){
-                imagesPath = "file:"+imagesPath.substring(0, imagesPath.indexOf("classes"));
-            }
-            imagesPath = imagesPath.substring(0, imagesPath.lastIndexOf("/"))+"/images/";
-            mImagesPath = imagesPath;
-        }
-        LoggerFactory.getLogger(WebSecurityConfig.class).info("imagesPath="+mImagesPath);
-        registry.addResourceHandler("/images/**").addResourceLocations(mImagesPath);
-        super.addResourceHandlers(registry);
-    }
+
 }

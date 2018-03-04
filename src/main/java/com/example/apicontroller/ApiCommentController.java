@@ -52,11 +52,11 @@ public class ApiCommentController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public BaseBean<CommentBean> uploadImg(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+		String name = request.getParameter("name");
+		Long uid = Long.parseLong(request.getParameter("uid"));
+		String content = request.getParameter("content");
 		if (!file.isEmpty()) {
 			try {
-				String name = request.getParameter("name");
-				Long uid = Long.parseLong(request.getParameter("uid"));
-				String content = request.getParameter("content");
 				String path = uid + "_" + System.currentTimeMillis() + "." + file.getOriginalFilename().split("\\.")[1];
 				
 				File root = new File(location);
@@ -78,7 +78,12 @@ public class ApiCommentController {
 				return ResultUtils.resultError("");
 			}
 		} else {
-			return ResultUtils.resultError("");
+			CommentBean bean = new CommentBean();
+			bean.setContent(content);
+			bean.setName(name);
+			bean.setTime(new Date().getTime());
+			bean.setUid(uid);
+			return ResultUtils.resultSucceed(commentDao.save(bean));
 		}
 	}
 

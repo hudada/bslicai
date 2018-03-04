@@ -17,6 +17,7 @@ public class SaveBean {
 	private Long time;
 	private Double money;
 	private String address;
+	private Long uid;
 	public Long getId() {
 		return id;
 	}
@@ -54,6 +55,12 @@ public class SaveBean {
 	}
 	public void setTime(Long time) {
 		this.time = time;
+	}
+	public Long getUid() {
+		return uid;
+	}
+	public void setUid(Long uid) {
+		this.uid = uid;
 	}
 	
 }

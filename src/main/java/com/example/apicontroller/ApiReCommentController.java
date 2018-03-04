@@ -47,8 +47,14 @@ public class ApiReCommentController {
 		return ResultUtils.resultSucceed(reCommentDao.findByPid(Long.parseLong(pid)));
 	}
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json")
-	public BaseBean<ReCommentBean> add(@RequestBody ReCommentBean bean) {
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public BaseBean<ReCommentBean> add(HttpServletRequest request) {
+		ReCommentBean bean = new ReCommentBean();
+		bean.setContent(request.getParameter("content"));
+		bean.setName(request.getParameter("name"));
+		bean.setPid(Long.parseLong(request.getParameter("pid")));
+		bean.setTime(Long.parseLong(request.getParameter("time")));
+		bean.setUid(Long.parseLong(request.getParameter("uid")));
 		return ResultUtils.resultSucceed(reCommentDao.save(bean));
 	}
 
