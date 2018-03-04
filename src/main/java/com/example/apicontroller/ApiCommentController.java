@@ -49,8 +49,21 @@ public class ApiCommentController {
 	public BaseBean<List<CommentBean>> list() {
 		return ResultUtils.resultSucceed(commentDao.findByTime());
 	}
-
+	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public BaseBean<CommentBean> add(HttpServletRequest request) {
+		String name = request.getParameter("name");
+		Long uid = Long.parseLong(request.getParameter("uid"));
+		String content = request.getParameter("content");
+		CommentBean bean = new CommentBean();
+		bean.setContent(content);
+		bean.setName(name);
+		bean.setTime(new Date().getTime());
+		bean.setUid(uid);
+		return ResultUtils.resultSucceed(commentDao.save(bean));
+	}
+
+	@RequestMapping(value = "/addwithimg", method = RequestMethod.POST)
 	public BaseBean<CommentBean> uploadImg(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
 		String name = request.getParameter("name");
 		Long uid = Long.parseLong(request.getParameter("uid"));
